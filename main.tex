@@ -1,0 +1,1622 @@
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt]{article}
+\usepackage{UF_FRED_paper_style}
+\usepackage{tcolorbox}
+
+%% ===============================================
+%% Setting the line spacing (3 options: only pick one)
+% \doublespacing
+% \singlespacing
+\onehalfspacing
+%% ===============================================
+
+\setlength{\droptitle}{-5em} %% Don't touch
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SET THE TITLE
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TITLE:
+\title{Miranda Programming Language}
+
+% AUTHORS:
+\author{Ivan Medrano\\% Name author
+    \href{imedrano1@itam.mx}{\texttt{imedrano1@itam.mx}} %% Email author 1 
+\and Hecttor Juarez\\% Name author
+    \href{mailto:secondauthor@ufl.edu}{\texttt{hjuarezg4@itam.mx}} %% Email author 2
+%\and Forth Author\\% Name author
+%    \href{mailto:forthuthor@ufl.edu}{\texttt{forthuthor@ufl.edu}}%% Email author 4
+    }
+    
+% DATE:
+\date{March 2020}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% ABSTRACT
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\setstretch{.8}
+\maketitle
+% %%%%%%%%%%%%%%%%%% 
+
+\begin{abstract}
+% CONTENT OF ABS HERE--------------------------------------
+Miranda is an advanced functional programming developed by David Turner.
+Functional programming is a method of program construction that emphasises
+functions and their application rather than commands and their execution.
+Functional programming uses simple mathematical notation that allows problems to be described
+clearly and concisely. The aim of the Miranda system is to provide a modern 
+functional language, embedded in a convenient programming environment, 
+suitable both for teaching and as a general purpose programming tool
+\\
+% END CONTENT ABS------------------------------------------
+\textit{\textbf{Keywords: }%
+functional programming; recursion; lazy evaluation.}\\ %% <-- Keywords HERE!
+
+\end{abstract}
+}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% BODY OF THE DOCUMENT
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% --------------------
+\section{Introduction}
+% --------------------
+
+Programming in a functional language consists of building definitions and
+using the computer to evaluate expressions. The primary role of the programmer
+is to construct a function to solve a given problem. This function,
+which may involve a number of subsidiary functions, is expressed in notation
+that obeys normal mathematical principles. The primary role of the computer
+is to act as an evaluator or calculator: its job is to evaluate expressions
+and print the results.
+A characteristic feature of functional programming is that if an expression
+possesses a well-defined value, then the order in which a computer may carry
+out the evaluation does not affect the outcome.
+
+\subsection{What is a function?}
+
+If we ignore the details of the computation—the “how” of the computation—and focus on the result being computed—the “what” of the computation—then a program becomes a virtual black box that transforms input into output. From this point of view, a program is essentially equivalent to a mathematical function.\\
+\textbf{DEFINITION} : A function is a rule that associates to each \textbf{x} from some set \textbf{X} of values a unique \textbf{y}
+from a set \textbf{Y} of values. In mathematical terminology, if $f$ is the name of the function, we write:
+\begin{center}
+  $  f: X\rightarrow Y$\\
+  $y\rightarrow f(x)$
+\end{center}
+The set \textbf{X} is called the domain of $f$, while the set \textbf{Y} is called the range of $f$. The \textbf{x} in $f(x)$, which represents any value from \textbf{X}, is called the independent variable, while the \textbf{y} from the set \textbf{Y}, defined by the
+equation $y = f(x)$, is called the dependent variable. Sometimes $f$ is not defined for all \textbf{x} in \textbf{X}, in which
+case it is called a partial function (and a function that is defined for all \textbf{x} in \textbf{X} is called total).
+Programs, procedures, and functions in a programming language can all be represented by the
+mathematical concept of a function. In the case of a program, \textbf{x} represents the input and \textbf{y} represents the
+output. In the case of a procedure or function, \textbf{x} represents the parameters and \textbf{y} represents the returned
+values. In either case, we can refer to \textbf{x} as “input” and \textbf{y} as “output.” Thus, the functional view of programming makes no distinction between a program, a procedure, and a function. It always makes a
+distinction, however, between input and output values.
+In programming languages, we must also distinguish between function definition and
+function application. A function definition describes how a value is to be computed using formal parameters. A function application is a call to a defined function using actual parameters, or the values
+that the formal parameters assume for a particular computation. Note that, in mathematics, we don’t
+always clearly distinguish between a parameter and a variable. Instead, the term independent variable is
+often used for parameters
+\\
+\\
+\textbf{Functional composition}
+
+The composition of two functions $f$ and $g$ is the function $h$ such that $h (x) =
+f (g x )$. 
+Functional composition is denoted by the operator ($\cdot$ ).\\
+We have:
+\begin{center}
+    
+
+$(f \cdot g) x = f (g x)$
+
+\end{center}
+The type of ($\cdot$) is given by:
+
+\begin{center}
+    
+
+$(\cdot) :: (\beta \rightarrow \gamma) \rightarrow (\alpha \rightarrow \beta) \rightarrow (\alpha \rightarrow \gamma)$
+
+\end{center}
+
+Functional composition takes a function of type $ (\alpha \rightarrow \beta) $ on the right, a
+function of type $(\beta \rightarrow \gamma)$ on its left, and returns a function of type $(\alpha \rightarrow \gamma)$ .
+Thus $(\cdot)$ is an example of a polymorphic function which can assume
+different instances in different expressions (and even within the same expression). The only restriction is that the source type of its left-hand argument
+must agree with the target type of its right-hand argument, and this is just
+what is expressed in the type declaration above. \\
+
+\textbf{Using the Miranda system} \newline
+The Miranda interactive system issues a prompt and waits for the programmer to
+type something. The programmer may type either an expression to be evaluated
+or an instruction to the Miranda system; all instructions start with a slash (for
+example, /q to quit from Miranda, or /e to ask Miranda to edit a file). Miranda
+will either evaluate the expression or obey the instruction; it then issues a fresh
+prompt and waits for the programmer to type something else.
+
+\subsection{Miranda}
+
+Miranda is a modern functional programming language designed by David Turner of the University of Kent, with lazy evaluation, polymorphic strong typing, and a powerful module system. The main features of Miranda are:
+\begin{itemize}
+    \item purely functional - no side effects
+\item higher order - supports functional data
+\item lazy - supports non strict functions and infinite data objects
+\item list comprehensions
+\item polymorphic strong typing
+\item abstract data types and modules
+\end{itemize}
+
+
+\section{Types}
+The functions which we use in functional programs will involve all sorts of different
+kinds of value. A data
+type may be specified either by enumerating the values that data items of that
+type may have, or by the operations that may be performed upon data items of
+that type. Conscientious use of a type classification system aids the construction
+of clear, reliable, well-structured programs.
+
+Miranda is a strongly typed language. This means that the system uses information about the types of data values to ensure that they are used in the correct
+way
+Miranda has a number of built-in data types, including the simple types—
+integers, fractional (or real) numbers, strings, characters and Booleans—together
+with fixed-length aggregate types
+
+\subsection{Numbers}
+Miranda recognizes two sorts of number: integers and fractional (real) numbers,
+and is generally happy for these two subtypes to mix. Notice that fractional
+numbers are indicated by decimal points (trailing zeros are required) or by using
+exponential format. The precision cannot be specified by the programmer; it is
+determined by the machine in use, but it is guaranteed to be at least the equivalent
+of 16 decimal places.
+Notice that whenever a fractional number appears as one of the operands to these operators then the
+result will be a fractional number. The only exceptions are div and mod which
+expect two integer operands, and will produce an error message otherwise. Data values of both sorts of number are indicated by the type name "num" and may be manipulated by the operators shown in the next
+table. 
+
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ + & addition  \\
+  \hline
+ - & substraction  \\ 
+  \hline
+ * & multiplication  \\ 
+  \hline
+ / & real number division  \\ 
+  \hline
+ div & integer division  \\ 
+   \hline
+ mod & integer remainder  \\ 
+   \hline
+   \^{}&  exponentiation  \\ 
+\hline
+\end{tabular}
+\end{center}
+
+
+\subsection{Character}
+The ASCII character set gives 256 characters, numbered from 0
+to 255, where the first 128 characters correspond to the ASCII character set. These characters constitute the data type char and are provided as primitive. The denotation for
+characters is to enclose them in single quotation marks. Thus:
+\begin{tcolorbox}
+
+
+Miranda 'a'\\
+'a'\\
+Miranda '7'\\
+'7'
+\end{tcolorbox}
+
+It is important to understand that the character ' 7 ' is quite a different entity
+from the decimal number 7: the former is a character and is a member of
+the type c h a r , while the latter denotes a number and is a member of the
+type num .
+
+Two primitive functions are provided for processing characters , code and
+decode. The function code :: char -> num converts a character to the integer
+corresponding to its ASCII code number, and decode :: num -> char does
+the revers.\\
+Example
+
+\begin{tcolorbox}
+Miranda code '7'\\
+55\\
+Miranda decode 55\\
+'7'
+
+\end{tcolorbox}
+
+
+\subsection{Strings}
+Character strings are represented by any sequence of characters surrounded by
+double quotations marks and are denoted by the type [char]. Hence there is a
+difference between the character ’a’ and the string "a". 
+\begin{center}
+
+\begin{tabular}{ |c|c| } 
+ \hline
+ ++ & concatenation  \\ 
+ \hline
+ \# & length  \\ 
+ \hline
+ ! & indexing  \\
+ \hline
+ \-{} & subtraction \\
+\hline
+\end{tabular}
+\label{Tab:1}
+\end{center}
+
+Example:
+\begin{tcolorbox}
+Miranda "String example" \\
+String example\\
+
+Miranda "2" ++ "=" ++ "1+1" \\
+2=1+1\\
+
+Miranda "String" \- "example"\\
+String\\
+
+Miranda \# "String example"\\
+14\\
+
+Miranda "String" !0\\
+'S'
+
+Miranda "String" !1\\
+'t'
+\end{tcolorbox}
+
+The index operator \! considers the first position in the string as position 0.\\
+
+Another way to represent a number as a string of character is using the keyword \textbf{show}.
+Example:
+
+ \begin{tcolorbox}
+ Miranda show 123\\
+123
+
+ \end{tcolorbox}
+
+
+\subsection{Booleans}
+There are two canonical expressions for denoting truth-values, namely True and False. A function that returns boolean values is called a predicate.
+Booleans are the results returned by the comparison operators , which are given as follows:
+
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+    = &  equal\\
+    \~{}=  & not equal\\
+    <  & less than\\
+    >   &greater than\\
+    $\leq$ &less than or equal\\
+    $\geq$ &greater than or equal\\
+    \hline
+\end{tabular}
+\end{center}
+\par
+
+Examples of the use of the comparison operators:
+\begin{tcolorbox}
+Miranda 2 = 3 \\
+False\\
+Miranda 2 \~{}= 3\\
+True\\
+Miranda 2 < 3 \\
+True\\
+Miranda 2 > 3 \\
+False
+\end{tcolorbox}
+
+\textbf{Logical operators}
+
+
+Data values of type bool may be operated on by special logical operators: \\
+
+\begin{center}
+
+\begin{tabular}{|c|c|}
+   \hline
+   \~{}   &  logical negation\\
+   \&{}  & logical conjunction\\
+   \textbackslash / & logical disjunction\\
+   \hline
+\end{tabular}
+
+\end{center}
+The operators for both conjunction \&{} (logical and) and disjunction \textbackslash /
+(logical or) are sometimes known as “lazy” operators because they do not strictly
+need to evaluate their second operand.
+Example:
+\begin{tcolorbox}
+
+Miranda (y = 42) \& (x = 0) \& (y = x)\\
+False\\
+Miranda (y = 42) \& ((x = 0) \& (y = x))\\
+False\\
+Miranda (x = 0) \textbackslash / ((y div x) > 23)\\
+True
+
+\end{tcolorbox}
+
+\subsection{Tuples}
+One way of combining types to form new ones is by pairing them. For
+example, the type ( num, char) consists of all pairs of values for which the first component is a number and the second a character.
+This section introduces the tuple which combines values to create an aggregate
+type. As an example:
+\begin{center}
+\begin{tabular}{ |c| } 
+ \hline
+ date = (13, "March", 1066)  \\ 
+\hline
+\end{tabular}
+\label{Tab:1}
+\end{center}
+
+The composite format of a tuple can be used on the left-hand side of an identifier
+definition, thereby providing a convenient shorthand for multiple definitions:
+\begin{center}
+\begin{tabular}{ |c| } 
+ \hline
+(day, month, year) = (13, "March", 1066) \\ 
+\hline
+\end{tabular}
+\label{Tab:1}
+\end{center}
+
+The names day, month and year can now be used as single identifiers:
+
+\begin{tcolorbox}
+Miranda day::\\
+13\\
+
+
+Miranda month ::\\
+March\\
+
+
+Miranda year ::\\
+1066
+\end{tcolorbox}
+One advantage of this system of tuples is that if, for example, one inadvertently writes a pair instead of a triple in an expression, then the strong typing discipline can pinpoint the
+error. 
+
+\subsection{Properties of operators}
+An understanding of the properties of operators may significantly assist debugging
+and may aid the design of better functions. This
+section explains the following key concepts:
+
+\begin{itemize}
+\item Precedence and order of association determine the correct meaning of any
+expression which includes multiple occurrences of operators and/or function
+applications.
+\item Associative and commutative functions and operators present an opportunity for the programmer to reorganize an expression without changing its
+meaning.
+\item Overloading refers to the fact that some operators may manipulate values of
+different types.
+\end{itemize}
+
+
+
+
+\subsection{Identifier}
+
+In Miranda it is possible to give a name or identifier to the  value of an expression. This is achieved by typing /e or /edit to enter the editor and then modifying the default script file (which has the name script.m). 
+An expression may then be given a name, using the format:
+\subsection{Determining the type of an expression}
+The type of any expression may be determined by typing either the expression or its name followed by two colons. This invokes Miranda’s type checker and reports the type. For example:
+
+\[
+\boxed{
+\begin{aligned}
+  & x = 3+4\\
+  & message = "hello"
+\end{aligned}
+}
+\]
+
+Once the editor has been exited, the system checks the syntax of the script file
+and, if it is valid, then the value given to a name can readily be recalled by entering
+the name as an expression to be evaluated:
+
+\begin{tcolorbox}
+Miranda (3 + 4) ::\\
+num\\
+
+
+Miranda ’A’ ::\\
+char\\
+
+
+Miranda x ::\\
+num\\
+
+Miranda True \/ True ::\\
+bool\\
+
+Miranda message\\
+hello
+\end{tcolorbox}
+
+\subsection{Scope}
+\textbf{Scope Rules}
+\begin{enumerate}
+
+    \item Any appearance of a formal parameter name takes its value from the actual parameter to which the function is applied. In other words, the local environment ignores any previous binding for that name in the inherited environment. Formally, the name is said to be bound in that function. This rule also holds for the name of the function itself.
+    \item Any other name that appears in the function body takes its value from the inherited environment; formally, it is said to be free in that function. Any function that does not have any free values is said to be closed or to exhibit closure. 
+    
+\end{enumerate}
+
+
+% --------------------
+\section{Assignment}
+% -------------------
+In Miranda there is no assignment operator. It is not possible for a programmer
+to make an explicit change to the value held at a given storage location and it is
+not possible for a function to change the value of its argument. To those who have
+some experience of programming in an imperative language, this may come as a
+shock.
+In order to understand why assignment is not necessary in a functional language,
+it is worthwhile analysing its rˆole in imperative programs:
+\begin{itemize}
+    \item  To store input and output values
+    \item  To control iteration.
+    \item To store the results of intermediate calculations
+    \item To store a history of intermediate results
+\end{itemize}
+\par
+All of the above imply the need to consider the nature of data storage. In functional
+languages, it is not necessary to think in terms of data storage locations and
+so it is correspondingly unnecessary to think in terms of the alteration of the
+contents of data storage locations. The roˆle taken by assignment is either provided
+transparently by the Miranda system or is a natural consequence of the recursive
+style of programming:
+\begin{enumerate}
+    \item Input to a program appears as the actual parameter to its topmost function
+and output from the program is the result of the topmost function application. The allocation of storage locations to hold these values is automatically
+managed by the system and the output of the topmost function application is
+printed to the screen without the programmer having to specify this action.
+\item Iteration control is provided by recursion; the number of iterative steps being
+controlled by the value of the initial argument.
+\item The results of intermediate calculations need not be stored (although a result
+can be “remembered” as a definition for later use). The automatic storage
+allocation mechanism of Miranda hides store allocation and deallocation from
+the programmer, as seen in the following comparison of the imperative and
+functional treatments of the function swap.
+\end{enumerate}
+
+\begin{center}
+    
+
+\begin{tabular}{|c c|}
+\hline
+{void &\begin{flushleft}
+
+swap (int *xp, int *yp) \end{flushleft} \{ \\
+ & \begin{flushleft}
+ 
+int t; \end{flushleft}\\ 
+  &\begin{flushleft}t = *xp; \end{flushleft}\\
+  &\begin{flushleft}*xp = *yp; \end{flushleft}\\
+  &\begin{flushleft}*yp = t; \} \end{flushleft} \\
+  \hline
+  
+\end{tabular}  
+  \end{center}
+  
+
+% --------------------
+\section{Functions}
+
+In  Miranda functions may either be built-in, predefined in the
+standard environment or they may be defined by the programmer.The result of a function application may either be saved (by giving it an identifier) or it may be
+used immediately in a bigger expression (for example as an argument to another
+function). Functions are defined within the script file. The simplest function
+definitions have the following template:\\
+
+function name parameter name = function body \\
+\begin{center}
+
+\framebox{function1 x = x² + 9 }
+    
+\end{center} 
+
+
+At the Miranda prompt a function  can be used in three ways:
+
+\begin{itemize}
+\item As a function applied to an actual argument.
+
+\begin{tcolorbox}
+Miranda function1 1\\
+10
+\end{tcolorbox}
+
+\item In conjunction with the special type indicator keyword ::
+
+\begin{tcolorbox}
+Miranda function1 ::\\
+num->num
+\end{tcolorbox}
+
+\item As an expression:
+
+\begin{tcolorbox}
+Miranda function1 \\
+<function>
+\end{tcolorbox}
+
+\end{itemize}
+
+\subsection{The offside rule}
+The “offside rule” is a syntactic constraint for actions that cannot be written on
+one line; its template is of the form:
+
+\begin{center}
+\begin{tabular}{c c}
+
+\textit{ function parameter} = &\begin{flushleft}  \textit{start of action on first line} \end{flushleft}  \\
+ &\begin{flushleft}
+ 
+ \textit{next line of action must NOT be to the left}\end{flushleft}\\
+ &\begin{flushleft}
+ 
+ \textit{of the start of the action on the first line} \end{flushleft}
+ 
+\end{tabular}
+\end{center}
+
+\subsection{Function evaluation}
+
+
+In a composition of functions the evaluation of functions goes from the argument that lies within the composition, as the example below shows:
+
+\begin{center}
+\begin{tabular}{|c|}
+\hline
+twice x = x*2\\
+quad x = twice(twice x)\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{flushleft}
+
+quad (sqrt (22 + 42))\\
+\\
+==> twice (twice (sqrt (22 + 42)))\\
+==> (twice (sqrt (22 + 42))) * 2\\
+==> ((sqrt (22 + 42)) * 2) * 2\\
+==> ((sqrt 64) * 2) * 2\\
+==> (8.0 * 2) * 2\\
+==> 16.0 * 2\\
+==> 32.0
+\end{flushleft}
+
+The above example illustrates several important points about function evaluation
+and about evaluation in general:\\
+
+\begin{itemize}
+
+\item In order to evaluate the function body, effectively a new copy of the function
+body is created with each occurrence of the formal parameter replaced by a
+copy of the actual parameter.
+
+\item It is impossible for any function application to affect the value of its actual
+parameters.
+
+\item The argument to a function is only evaluated when it is required (this is sometimes known as “call-by-name”). Furthermore, if an argument is used
+more than once inside the function body then it is only evaluated at most
+once—all occurrences of the formal argument name benefit from a single
+evaluation of the actual argument (this is sometimes known as “call-by-need”
+or “lazy evaluation”).
+\item In general, the evaluation of function applications (and indeed evaluation
+of any expression) may be viewed as a sequence of substitutions and simplifications, until a stage is reached where the expression can no longer be
+simplified.
+
+\end{itemize}
+
+\subsection{Functions with more than one result (input or output)}
+
+It is possible for a function to return more than one result because a tuple may also
+be the target type of a function This is demonstrated in the following function
+quotrem  whose result holds both the quotient and remainder
+of dividing the source tuple’s first component by its second component:
+
+\begin{center}
+\begin{tabular}{|c|}
+\hline
+quotrem (x, y) = ((x div y), (x mod y))\\
+\hline
+\end{tabular}    
+\end{center}
+
+\begin{tcolorbox}
+Miranda quotrem ::\\
+(num,num)->(num,num)\\
+Miranda quotrem (7, 3)\\
+(2,1)
+\end{tcolorbox}
+
+\subsection{Polymorphic functions}
+
+It can be useful to define functions that provide general operations on tuples regardless
+of their component types. For example, the functions myfst and mysnd,
+respectively, extract the first item and second item from a pair:
+\begin{center}
+    
+
+\begin{tabular}{|c|}
+\hline
+myfst (x,y) = x\\
+mysnd (x,y) = y\\
+\hline
+
+\end{tabular}
+\end{center}
+
+Another topic to consider of the polymorphic functions is that it may receive the type names (*,**), which are known as polytypes. It should be noted that the
+actual values of the tuple could be of different types, which is indicated by the two
+different polytype names (a single star and a double star).In general, a function is said
+to be polymorphic in the parts of its input which it does not evaluate. Thus, in
+the above example myfst is polymorphic in both \textbf{x} and \textbf{y}, whereas in the following
+example $g$ is only polymorphic in \textbf{x}:
+
+
+\begin{center}
+    
+\begin{tabular}{|c|}
+
+\hline
+g (x,y) = (-y,x)\\
+\hline
+
+\end{tabular}
+\end{center}
+
+\begin{tcolorbox}
+Miranda g ::\\
+(*,num)->(num,*)
+\end{tcolorbox}
+
+\subsection{Pattern matching}
+
+The general template for achieving pattern matching in functions is:
+
+\begin{center}
+\begin{tabular}{c}
+\textit{
+function name pattern 1 = function body 1}\\
+\textit{
+function name pattern 2 = function body 2}\\
+. . .\\
+. . .\\
+\textit{
+function name pattern N = function body N} \\
+
+\end{tabular}
+\end{center}
+
+When the function is applied to an argument, Miranda sequentially scans the
+definitions, from the topmost definition, until the actual parameter matches one of
+the patterns. The associated function body is then evaluated. At its simplest, a
+function will have only one pattern. Since a formal parameter is an instance of a
+pattern, all the function definitions so far presented are also examples of this form.
+\subsection{Duplicates}
+
+Unlike some other languages that have pattern matching, Miranda permits both
+constant and formal parameters to be replicated:
+
+\begin{center}
+\begin{tabular}{|c|}
+\hline
+both equal (x,x) = True\\
+both equal (x,y) = False\\
+\hline
+\end{tabular}    
+\end{center}
+
+The occurrence of duplicated identifiers in a pattern instructs Miranda to perform
+an equality check. Thus, in the above example, both equal will only return True
+if both the first and second components of its two-tuple argument are the same
+(are equal to each other), and both zero will only return True if both components
+are equal to 0.
+The equality check is only performed if an identifier is duplicated in a single
+pattern: duplication of identifiers “vertically” across several patterns is commonplace and has no special meaning.
+
+\subsection{Non-exhaustive patterns}
+Although programmers may be tempted to ignore patterns that they believe will
+never arise, it is generally sensible to trap unexpected cases with an appropriate
+“default” pattern. If the programmer has not considered all the possible input
+options then Miranda will still permit the script file but may generate a run-time
+error.
+
+\begin{center}
+    \begin{tabular}{|c|}
+    \hline
+not False = True\\
+\hline
+    \end{tabular}
+\end{center}
+
+\begin{tcolorbox}
+Miranda not False\\
+True\\
+Miranda not True\\
+program error: missing case in definition of not
+\end{tcolorbox}
+
+\subsection{Order of evaluation}
+It must be stressed that Miranda checks each alternative sequentially from the top
+pattern to the bottom pattern, ceasing evaluation at the first successful match. If
+the patterns are mutually exclusive then it does not matter in which order they are
+defined. However, patterns may overlap and then the order of definition is vital.\\
+It is strongly advised that patterns should be mutually exclusive wherever possible.
+However, the guideline for designing functions with overlapping alternative
+patterns is to arrange the patterns such that the more specific cases appear first.
+
+\subsection{Lazy evaluation of function arguments}
+
+Finally, a word of caution regarding the “lazy evaluation” of function arguments, Miranda uses a “call-by-need” style of argument evaluation,
+so that in the following program a divide-by-zero error is avoided:
+
+
+\begin{center}
+    \begin{tabular}{|c|}
+         \hline
+          myfst (x,y) = x\\
+result = myfst (34, (23 / 0))\\
+          \hline
+    \end{tabular}
+\end{center}
+
+\begin{tcolorbox}
+Miranda result\\
+34
+\end{tcolorbox}
+
+However, if myfst were to use pattern matching with constants, then the divideby-
+zero error is not avoided:
+
+\begin{center}
+    \begin{tabular}{|c|}
+         \hline
+         myfst (x,0) =x\\
+          myfst (x,y) = x\\
+result = myfst (34, (23 / 0))\\
+          \hline
+    \end{tabular}
+\end{center}
+
+
+\begin{tcolorbox}
+Miranda result\\
+program error: attempt to divide by zero
+\end{tcolorbox}
+
+\subsection{Guards}
+
+Pattern matching may be made more selective and
+powerful by using the keywords if and otherwise.In the following example, use of
+Miranda’s “guard” mechanism demonstrates how patterns may be constrained:
+
+
+\begin{center}
+    
+    \begin{tabular}{|c c|}
+    \hline
+         safe\_toupper c
+ & \begin{flushleft} = decode ((code c) - (code ’a’) + (code ’A’)),if (c >=’a’) \& (c <= ’z’)\end{flushleft} \\
+ & \begin{flushleft} = c, otherwise \end{flushleft} \\
+\hline
+    \end{tabular}
+    
+\end{center}
+
+
+There is no restriction on the combination of alternative patterns and guarded
+patterns. For example:
+
+
+\begin{center}
+      
+    \begin{tabular}{|c c|}
+    \hline
+    
+
+  
+    check equiv (0,x) &= "Equivalent", if x="Zero" \\
+&= "Not equivalent", otherwise\\
+check equiv (1,x) &= "Equivalent", if x="One"\\
+&= "Not equivalent", otherwise\\
+check equiv (n,x) &= "Out of range of this check"\\
+
+\hline
+    
+    \end{tabular}
+\end{center}
+
+
+\subsection{Type declarations}
+
+The type indicator :: which not only reports the type of
+a function or value identifier when used with the Miranda command interpreter,
+but can also be used to declare the intended type of a function or identifier inside
+a script file. The general template for its use is:\\
+
+\begin{center}
+\textit{function name :: parameter type -> target type} \\
+\end{center}
+For example:
+
+\begin{center}
+\begin{tabular}{|c|}
+
+\hline
+right\_echo :: num -> [char] \\
+right\_echo x = (show x) ++ (show x) \\
+\hline
+
+\end{tabular}
+\end{center}
+
+\subsection{Polymorphic type constraint}
+
+A polytype may also be included as a type constraint. The following functions
+third same and third any are two versions of the same function which exemplify
+this property. In the first version, the use of the same polytypes constrains the actual
+parameters to be of the same type. The second version uses different polytypes
+to permit actual parameters to be of different types.
+Same type version:
+
+
+\begin{center}
+    
+    \begin{tabular}{|c|}
+    \hline
+         third same :: (*,*,*) -> *\\
+third same (x,y,z) = z\\
+\hline
+
+    \end{tabular}
+\end{center}
+
+
+Any type version:
+
+\begin{center}
+    
+    \begin{tabular}{|c|}
+    \hline
+         third same :: (*,**,***) -> *\\
+third same (x,y,z) = z\\
+\hline
+
+    \end{tabular}
+\end{center}
+
+\subsection{Type synonyms}
+
+Miranda allows a type to be given
+a name, which may be any legal identifier (which
+must also start with a lower case character). For example the tuple (13, "March",
+1066) has the type (num,[char],num). For clarity this type could be given the
+name date by using the == facility as follows:
+
+\begin{center}
+    \begin{tabular}{|c|}
+    \hline
+    
+    date == (num, [char], num)\\
+
+\hline
+    \end{tabular}
+\end{center}
+
+
+
+
+
+
+\subsection{Polymorphic type synonyms}
+
+It is also legal to have type synonyms that are entirely or partially comprised of
+polytypes. If a polytype appears on the right-hand side of a declaration then it
+must also appear on the left-hand side, between the == token and the new type
+name. For example, :
+
+
+
+
+\begin{center}
+    \begin{tabular}{|c|}
+    \hline
+    
+    sametype triple * == (*,*,*)\\
+
+\hline
+    \end{tabular}
+\end{center}
+An alternative and more general type synonym would be:
+
+
+
+
+\begin{center}
+    \begin{tabular}{|c|}
+    \hline
+    
+triple * ** *** == (***,**,*)\\
+
+\hline
+    \end{tabular}
+\end{center}
+
+
+
+\subsection{Simple recursive functions}
+
+Miranda, like other functional programming languages, uses recursion as its main
+iteration control structure; this general mechanism can achieve the same effect as
+the imperative language features such as “while”, “repeat” and “for” loops.A
+recursive function definition is one where the name of the function being defined
+appears inside the function body. When the function is applied to an argument,
+an appearance of the function name in the function body causes a new copy of the
+function to be generated and then applied to a new argument. If the function name
+appears as part of an expression then the evaluation of the expression is suspended
+until the recursive function application returns a value.
+Recursion is a very powerful and general mechanism which must be used carefully.
+At its simplest, it can be used to generate an infinite number of applications
+of the same function, for example:
+
+
+\begin{center}
+    \begin{tabular}{|c|}
+    \hline
+loop forever () = loop forever \\
+
+\hline
+    \end{tabular}
+\end{center}
+
+
+
+
+
+
+\subsection{Stack recursive functions}
+
+In a stack recursion function the arguments of all the calculations are stacked until the terminating pattern is met. The following function printdots is an example of the recursive style known as
+stack recursion. This function prints the number of dots indicated by its parameter.
+Firstly, there is a terminating pattern 0. Secondly, each recursive application of
+printdots is to a different n. Thirdly, each successive n decreases towards the
+terminating pattern 0.
+
+
+
+\begin{center}
+    \begin{tabular}{|c|}
+    \hline
+    printdots :: num -> [char]\\
+printdots 0 = ""\\
+printdots n = "." ++ (printdots (n - 1))\\
+\hline
+    \end{tabular}
+\end{center}
+
+A hand evaluation reveals:
+
+\begin{flushleft}
+printdots 3\\
+==> "." ++ (printdots (3 - 1))\\
+==> "." ++ (printdots 2)\\
+==> "." ++ ("." ++ (printdots (2 - 1)))\\
+==> "." ++ ("." ++ (printdots 1))\\
+==> "." ++ ("." ++ ("." ++ (printdots (1 - 1))))\\
+==> "." ++ ("." ++ ("." ++ (printdots 0)))\\
+==> "." ++ ("." ++ ("." ++ ("")))\\
+==> "." ++ ("." ++ ("." ++ ""))\\
+==> "." ++ ("." ++ ".")\\
+==> "." ++ ("..")\\
+==> "..."
+
+\end{flushleft}
+
+
+\subsection{Accumulative recursive functions}
+
+Accumulative recursive functions also meet the fundamental requirements of having a terminating
+condition and a convergent action. The terminating condition is met in the first
+pattern, which if matched halts the recursion and gives the result. The following example
+plus exploits the fact that two positive numbers can be added, by successively
+incrementing one of them and decrementing the other until it reaches zero
+
+
+\begin{center}
+    \begin{tabular}{|c|}
+         \hline
+         plus :: (num,num) -> num\\
+plus (x,0) = x\\
+plus (x,y) = plus (x + 1, y - 1)\\
+\hline
+    \end{tabular}
+    
+    
+\end{center}
+
+\begin{tcolorbox}
+Miranda plus (2,3)\\
+5
+\end{tcolorbox}
+Hand evaluating the application of plus to the tuple (2,3) gives:
+
+\begin{flushleft}
+==> plus (2 + 1, 3 - 1)\\
+==> plus (2 + 1, 2)\\
+==> plus (2 + 1 + 1, 2 - 1)\\
+==> plus (2 + 1 + 1, 1)\\
+==> plus (2 + 1 + 1 + 1, 1 - 1)\\
+==> plus (2 + 1 + 1 + 1, 0)\\
+==> 2 + 1 + 1 + 1\\
+==> 5\\
+\end{flushleft}
+
+
+
+% --------------------
+
+%---------------------
+\section{List}
+In  Miranda functions may either be built-in, predefined in the standard environment or they may be defined by the programmer.The result of a function application may either be saved (by giving it an identifier) or it may be
+used immediately in a bigger expression (for example as an argument to another
+function). Functions are defined within the script file. The simplest function
+definitions have the following template:
+\\
+
+\begin{center}
+function name parameter name = function body
+\end{center}
+
+At the Miranda prompt a function  can be used in three ways:\\
+
+\begin{itemize}
+\item As a function applied to an actual argument.
+\item In conjunction with the special type indicator keyword ::
+\item As an expression:
+\end{itemize}
+
+
+\subsection{List syntax}
+
+From the above analogy, it should be clear that the list data structure is naturally
+recursive in its definition. Informally, a Miranda list may be defined either as
+being empty or containing one element together with a list. From the above, a more formal, recursive definition of a list may now be derived:\\
+
+
+A list is either:\\
+\textit{empty}\\
+or:\\
+\textit{an element of a given type together with\\
+a list of elements of the same type}
+\\
+
+Here are some examples of lists entered at the prompt:
+
+\begin{tcolorbox}
+Miranda [1,2] ::\\
+{[ num ]}\\
+
+Miranda ["David Turner’s", "Miranda"] :: \\
+{[char]} \\
+
+Miranda [(1,2),(3,1),(6,5)] ::\\
+{[(num,num)]}\\
+
+Miranda [[1],[2,2,2]] ::\\
+{[[num]]}
+\end{tcolorbox}
+
+Its important to mention that all the elements of a list must have the same type; the Miranda system will detect
+any attempt to define a list of mixed types
+
+\subsection{Operation on lists}
+A list of one item can be created from a single
+item and [] because [] is a polytype list and so can be combined with an item of
+any type. The type of ":" is:
+
+\begin{tcolorbox}
+Miranda : ::\\
+*->[*]->[*]
+\end{tcolorbox}
+
+In the following example script file, all of the identifiers are of type [[char]]:
+
+\begin{center}
+    
+\begin{tabular}{|c|}
+\hline
+alist = "a" : []\\
+blist = "fed" : "cb" : alist\\
+clist = "C" : ["c", "c", "c"]\\
+dlist = "d" : "dd" : "d" : []\\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{tcolorbox}
+Miranda alist\\
+{["a"]} \\
+
+Miranda blist\\
+{["fed","cb","a"]}\\
+
+Miranda clist\\
+{["C","c","c","c"]}\\
+
+Miranda clist\\
+{["C","c","c","c"]}
+\end{tcolorbox}
+The combining operator ++ type is:
+
+\begin{tcolorbox}
+Miranda ++ ::
+{[*]}->{[*]}->{[*]}
+\end{tcolorbox}
+Sample session:
+
+\begin{tcolorbox}
+Miranda [1] ++ [2,3]\\
+{[1,2,3]}\\
+Miranda [] ++ [1]\\
+{[1]}\\
+Miranda [] ++ []\\
+{[]}\\
+Miranda 1 ++ [2,3]\\
+type error in expression
+cannot unify num with [num]
+\end{tcolorbox}
+
+
+The deconstruction operators hd and t1 gives the head and the tail of a list respectively
+
+Examples of hd:
+\begin{tcolorbox}
+Miranda hd [1,2,3,4]\\
+1\\
+Miranda hd {["Schoenfinkel","male","mathematician"]}\\
+Schoenfinkel\\
+Miranda hd [[1,2,3],[8,9]]\\
+{[1,2,3]}
+\end{tcolorbox}
+
+Examples of tl:
+
+\begin{tcolorbox}
+Miranda tl [1,2,3,4]\\
+{[2,3,4]} \\
+Miranda tl {["Schoenfinkel","male","mathematician"]}\\
+{["male","mathematician"]}\\
+Miranda tl [[1,2,3],[8,9]]\\
+{[[8,9]]}
+\end{tcolorbox}
+
+Both hd and tl give rise to errors when applied to empty lists:
+
+\begin{tcolorbox}
+Miranda hd {[]} \\
+program error: hd []\\
+Miranda tl []\\
+{[}\\
+program error: tl {[]}\\ 
+\end{tcolorbox}
+
+Here are some examples of other list operators -- (list substraction) , \# (list length) and ! (list indexing):
+
+\begin{tcolorbox}
+Miranda [’c’,’a’,’t’] -- {[’a’]}\\
+ct\\
+Miranda \# [345,2,34]\\
+3\\
+Miranda ["chris", "colin", "ellen"] ! 0\\
+chris
+\end{tcolorbox}
+
+\subsection{Dotdot notation}
+
+The simplest form of “dotdot” notation is to place two numbers in a list (using the
+aggregate format), separated by two dots as follows:
+
+\begin{tcolorbox}
+Miranda [1..4]\\
+{[1,2,3,4]}
+\end{tcolorbox}
+
+Lists of numbers which form an arithmetic series are also allowed. If the first
+number is followed by a comma and a second number (before the two dots) then
+this will specify the interval between each number in the series:
+
+\begin{tcolorbox}
+Miranda [1,3..9]\\
+{[1,3,5,7,9]}\\
+Miranda [-2,0..10]\\
+{[-2,0,2,4,6,8,10]}\\
+Miranda [1,7..49]\\
+{[1,7,13,19,25,31,37,43,49]}\\
+Miranda [1.1,1.2..2.4]\\
+{[1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4]}
+\end{tcolorbox}
+
+\subsection{Lists and strings}
+
+Strings and lists of strings are semantically related, since they both represent a
+sequence of characters. In fact, the string double-quote notation is just a convenient
+shorthand for a list of characters, as seen by the type indication for a string:
+
+\begin{tcolorbox}
+Miranda "sample" ::\\
+{[char]}
+\end{tcolorbox}
+
+This explains why all of the Miranda list operators work on both strings and lists.
+Notice that the above sample string could equally well have been written:
+
+\begin{tcolorbox}
+Miranda (’s’ : ’a’ : ’m’ : ’p’ : ’l’ : ’e’ : []) ::\\
+{[char]}\\
+or\\
+Miranda [’s’,’a’,’m’,’p’,’l’,’e’] ::\\
+ {[char]}
+\end{tcolorbox}
+
+\subsection{Lists and tuples}
+
+It can be seen that lists and tuples are similar in that they are both aggregate
+data structures (that is, they collect together many data elements). However, they
+differ in three ways:\\
+1. Their types: all the items in a list must be of the same type whereas tuple
+elements may be of differing types. However, lists and tuples can mix; it is
+legal to have tuples with list components and vice versa. In the latter case,
+it is necessary to ensure that the tuple elements of the list are of the same
+length and have the same component types.\\
+2. A list is a recursively defined type (it is defined in terms of itself), and therefore
+the type contains no information about the number of elements in the
+list. By contrast, a tuple is not recursively defined and the type of a tuple
+determines exactly how many elements it will contain. It is for this reason
+that lists may be constructed incrementally, whilst tuples may not.\\
+3. Equality testing: tuple comparison can only be made against tuples of the
+same composite type and hence the same number of components, whereas
+lists of any length may be compared.
+
+\subsection{Simple functions using lists}
+
+Functions over lists may be defined in the same manner as all other functions; they
+can be recursive, polymorphic and use pattern matching. The nature of recursive,
+and especially polymorphic recursive, functions is dealt with in later sections; this
+section overviews the use of pattern matching on lists. There are four things that
+can appear in function patterns involving lists:\\
+1. Formal parameters—which can be substituted by any actual value.\\
+2. Constants—including the empty list [].\\
+3. Constructed lists using : notation (the aggregate form is also legal, but is
+not recommended for general use).\\
+
+Examples of simple functions using lists:
+
+\begin{flushleft}
+    
+
+\begin{tabular}{ |c| } 
+ \hline
+\begin{flushleft} isempty :: [*] -> bool \end{flushleft}\\
+\begin{flushleft}isempty [] = True\end{flushleft}\\
+\begin{flushleft}isempty anylist = False\end{flushleft}\\
+\begin{flushleft}isnotempty :: [*] -> bool\end{flushleft}\\
+\begin{flushleft}isnotempty anylist = ~(isempty anylist)\end{flushleft}\\
+\begin{flushleft}bothempty :: ([*],[**]) -> bool\end{flushleft}\\
+\begin{flushleft}bothempty ([],[]) = True\end{flushleft}\\
+\begin{flushleft}bothempty anything = False\end{flushleft}\\
+\begin{flushleft} :: [char] -> bool\end{flushleft}\\
+\begin{flushleft}startswithMira (’M’ : ’i’ : ’r’ : ’a’ : rest) = True\end{flushleft}\\
+\begin{flushleft}startswithMira anylist = False\end{flushleft}\\
+\hline
+\end{tabular}
+\label{Tab:1}
+
+\end{flushleft}
+
+\subsection{Recursive functions using lists}
+
+Many of the functions over lists are recursive because the list itself is a recursive
+data structure. Whilst recursion involving numbers generally requires the recognition
+of zero to provide a terminating condition, list processing generally requires
+the recognition of the empty list.The template for many functions on lists is very similar to that of stack recursive
+functions:
+
+\begin{center}
+\begin{tabular}{c c}
+
+\textit{ template []} = &\begin{flushleft}  \textit{some final value} \end{flushleft}  \\
+
+\textit{ template (front: rest)} =
+ &\begin{flushleft}\textit{do something with front and} \end{flushleft}  \\
+ 
+ &\begin{flushleft}\textit{combine the result with a}\end{flushleft}\\
+ 
+ &\begin{flushleft} \textit{recursion on template applied to rest} \end{flushleft}
+ 
+\end{tabular}
+\end{center}
+For example, the following function adds all the items in a number list. It specifies
+that the sum of an empty list is 0, whilst the sum of any other list is the value of
+the front item added to the sum of the rest of the list:\\
+
+
+\begin{tabular}{ |c| } 
+ \hline
+\begin{flushleft} nlist == [num] \end{flushleft} \\
+\\
+\begin{flushleft}sumlist :: nlist -> num\end{flushleft} \\
+\begin{flushleft}sumlist [] = 0\end{flushleft} \\
+\begin{flushleft}sumlist (front : rest) = front + sumlist rest\end{flushleft} \\
+\hline
+\end{tabular}
+\label{Tab:1}
+
+\subsection{Accumulative recursion over lists}
+
+A template for accumulative recursive functions is:
+
+\begin{center}
+\begin{tabular}{c c}
+
+\textit{ main []} = &\begin{flushleft}  \textit{some terminating condition
+or error condition} \end{flushleft}  \\
+
+\textit{main any} =
+ &\begin{flushleft}\textit{aux (any, (initial value of accumulator))} \end{flushleft}  \\
+ 
+ \textit{main any} =
+ &\begin{flushleft}\textit{aux (any, (initial value of accumulator))} \end{flushleft}  \\
+ 
+ \textit{aux ([], accumulator)} =
+ &\begin{flushleft}\textit{accumulator} \end{flushleft}  \\
+ 
+  \textit{aux ((front: rest), accumulator)} =
+ &\begin{flushleft}\textit{aux(rest, do something with front
+and accumulator))} \end{flushleft}  \\
+\end{tabular}
+\end{center}
+
+The following example reworks sumlist to show its equivalent accumulative recursive
+implementation:
+\\
+
+\begin{tabular}{ |c| } 
+ \hline
+\begin{flushleft} nlist == [num] \end{flushleft}\\
+\\
+\begin{flushleft}sumlist :: nlist -> num\end{flushleft}\\
+\begin{flushleft}sumlist any = xsum (any, 0)\end{flushleft}\\
+\\
+\begin{flushleft}xsum :: (nlist, num) -> num\end{flushleft}\\
+\begin{flushleft}xsum ([], total) = total\end{flushleft}\\
+\begin{flushleft}xsum (front : rest, total) = xsum (rest, front + total)\end{flushleft}\\
+\hline
+\end{tabular}
+\\
+
+
+However, if it were desired to consider the sum of an empty 
+list to be meaningless or an error, it would be sensible to 
+validate the input list in sumlist and process
+it in the auxiliary function xsum. In the following version, 
+if sumlist recognizes an empty list then it treats this as an 
+error and does no further processing. In contrast,
+when xsum recognizes an empty list it treats this as the 
+terminating condition for the recursion and returns the desired total:
+
+\\
+\begin{tabular}{ |c| } 
+ \hline
+\begin{flushleft} nlist == [num] \end{flushleft}\\
+\\
+\begin{flushleft}sumlist :: nlist -> num\end{flushleft}\\
+\begin{flushleft}sumlist [] = error "sumlist - empty list"\end{flushleft}\\
+\begin{flushleft}sumlist any = xsum (any, 0)\end{flushleft}\\
+\\
+\begin{flushleft}xsum :: (nlist, num) -> num\end{flushleft}\\
+\begin{flushleft}xsum ([], total) = total\end{flushleft}\\
+\begin{flushleft}xsum (front : rest, total) = xsum (rest, front + total)\end{flushleft}\\
+\hline
+\end{tabular}
+
+
+\subsection{Polymorphic recursive functions on lists}
+
+Many list-handling functions are designed to explore or manipulate the list structure
+itself rather than the list elements. These are called “polymorphic” functions
+because the elements of the source lists may be of any type; otherwise they are the
+same as non-polymorphic functions.Polymorphic recursive functions
+on lists are particularly interesting, in that they are the basis for a rich variety
+of tools of general utility for list processing
+
+Examples:\\
+
+\begin{tabular}{ |c| } 
+ \hline
+\begin{flushleft}length :: [*] -> num \end{flushleft}\\
+\\
+\begin{flushleft}length [] = 0\end{flushleft}\\
+\begin{flushleft}length (front : rest) = 1 + length rest\end{flushleft}\\
+\hline
+\end{tabular}
+\\
+
+The function length follows the template provided to describe stack
+recursive functions. It provides the same functionality as the built-in # operator.
+Informally, the length of a list can be seen as one of two possibilities: the length
+of an empty list (which is 0) or the length of a non-empty list.\\
+
+\begin{tabular}{ |c| } 
+ \hline
+\begin{flushleft} mydrop :: (num, [*]) -> [*] \end{flushleft}\\
+\\
+\begin{flushleft}mydrop (0, anylist) = anylist\end{flushleft}\\
+\begin{flushleft}mydrop (any, []) = error "mydrop"\end{flushleft}\\
+\begin{flushleft}mydrop (n, (front : rest)) = mydrop (n - 1, rest)\end{flushleft}\\
+\hline
+\end{tabular}
+\\
+
+The polymorphic function mydrop returns part of its second argument (a list of
+items of any type) by removing the first n items, where n is the first argument.
+
+\subsection{Case analysis}
+
+It is impossible to consider every possible argument value to a list-handling function.
+In practice, it is only necessary to consider a limited number of cases:\\
+
+1. The empty list [] which must always be considered because it is either a
+terminating value or an illegal option.\\
+
+2. The general list (front : rest) which also must always be considered; the
+function body corresponding to this pattern is where the recursive application
+is normally found.\\
+
+3. Specific “n item” lists. For example the single item list (item : []), since
+there is a class of functions (for example listmax in Exercise 3.6) that require
+at least one element in the list for a meaningful result.\\
+
+\subsection{Structural induction}
+
+Case analysis is a useful method of ensuring that a programmer considers all possible
+inputs to a function. This gives immediate solutions to all “base” cases which
+are directly provided for in the function specification and also highlights those
+cases which require further processing. In the previous example of myreverse an
+intuitive recursive solution was evolved for the general list (front:rest); however
+not all problems are as amenable to such intuition. There is, therefore, a need for
+a more systematic method of analysis. The nature of this analysis will depend on
+the nature of the parameter of recursion (that is the parameter which converges
+towards a terminating condition). For lists, a technique known as structural induction
+is recommended because it provides a way to reason about a list’s recursive
+structure.
+
+Structural induction requires two steps:\\
+1. Consider all the base cases as for case analysis.\\
+2. Consider the general case. The design of the function body may be facilitated
+by the following technique: assume that a function body exists for a list rest
+and then construct a definition for the case (front:rest). The assumption
+is normally known as the induction hypothesis\\
+
+Example:\\
+
+\begin{tabular}{ |c| } 
+ \hline
+\begin{flushleft} startswith :: ([*],[*]) -> bool \end{flushleft}\\
+\\
+\begin{flushleft}startswith ([], anylist) = True\end{flushleft}\\
+\begin{flushleft}startswith (anylist, []) = False\end{flushleft}\\
+\begin{flushleft}startswith (front1 : rest1, front2 : rest2)= (front1 = front2) \& startswith (rest1, rest2)\end{flushleft}\\
+\hline
+\end{tabular}
+\label{Tab:1}
+
+\subsection{List comprehensions}
+
+
+The final piece of special notation provided for lists is called a list comprehension. It employs a syntax adapted from conventional mathematics for
+describing sets. The syntax is: 
+
+\begin{center}
+    
+    \textit{ [ ( expression) | (qualifier); ... ; ( qualifier)] }
+    
+    
+\end{center}
+
+in which ( expression) denotes an arbitrary expression, and a (qualifier) is
+either a boolean-valued expression or a generator. The forms for a generator
+we shall use are: 
+
+\begin{center}
+    
+\begin{tabular}{c c}
+\begin{flushrleft} (variable)\end{flushleft} & <- \begin{flushleft} (list)\end{flushleft}\\
+((variable) , (variable))& <- (listofpairs)\\
+((variable) , (variable) , (variable))& <- (listoftriples)\\
+    \end{tabular}
+    
+\end{center}
+and so on. 
+
+The best way of explaining what list comprehensions do is to give some
+examples. A simple starting point is:\\
+
+\begin{center}
+\begin{tabular}{|c|}
+\hline
+sqre = [x*x | x <- [1..10]; even x]\\
+\hline
+\end{tabular}
+\end{center}
+
+This reads as:
+“the list of all values x ∗ x
+such that x is drawn from the list [1,2,3,4,5,6,7,8,9,10]”
+
+\begin{tcolorbox}
+Miranda sqre\\
+{[1,4,9,16,25,36,49,64,81,100]}
+
+\end{tcolorbox}
+
+%---------------------
+% --------------------
+\section{Conclusions}
+% --------------------
+
+The use of an equational style of function definition is familiar, clear and concise.
+\begin{itemize}
+    \item its non-strict (lazy) evaluation strategy aids the modular development of programs.
+
+\item the static type checking of functions assists the development of a set of functions.
+The type discipline ensures that functions can be composed in only a limited
+number of ways. This is in marked contrast to a procedural programming language
+where there is much greater freedom of composition of programs.
+\item polymorphism helps the modular development of programs.
+\item algebraic types provide a simple, clear and consistent route to the development of
+recursive structures such as trees.
+\end{itemize}
+
+A number of implementation details
+simplified the use of Miranda:
+\begin{itemize}
+\item functions can be evaluated interactively with direct input of any data type (with the
+exception of abstract data types), and conversely the automatic listing of any data
+type simplifies the testing of individual functions.
+\item functions do not need to contain special input or output functions, since files are
+mapped onto lists.
+\item definitions can be given in any order, thus there is no particular order imposed on
+the development of a program.
+\item the provision of a literate programming format allows the development of program
+scripts that are self-contained documents. Lines that start with > are program;
+everything else is comment.
+\end{itemize}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% REFERENCES SECTION
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\medskip
+
+\bibliography{references.bib} 
+D. A. Turner \textit{An Overview of Miranda}, SIGPLAN Notices 21(12):158-166, December 1986. 
+Chris Clack, Colin Myers & Ellen Poon, \textit{Programming with Miranda}, Prentice Hall 1995. \\
+Richard Bird & Philip Wadler, \textit{An Introduction to Functional Programming}, Prentice Hall 1988.\\
+\newpage
+
